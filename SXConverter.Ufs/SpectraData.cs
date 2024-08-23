@@ -104,6 +104,14 @@ public class SpectraData
         data.wavelengths = [.. wavelength];
         data.spectra = [.. spectra];
 
+        /*
+         * The first line of the metadata is already read from the stream
+         * while reading the spectra data section.
+         * It is difficult to pass the last line of the spectra data section to the metadata.
+         * The metadata always starts with "file info\r",
+         * and it seems that SurfaceXplorer app recognizes the metadata with this prefix.
+         * Therefore, "file info\r" is inserted at the beginning of the metadata.
+         */
         var metadata = reader.ReadToEnd();
         data.Metadata = "file info\r" + metadata;
 
