@@ -156,81 +156,48 @@ public class SpectraData
     private static SpectraData ReadFromUfs(Stream stream)
     {
         var data = new SpectraData();
+        var reader = new UfsReader(stream);
 
-        var versionStr = ReadString(stream);
+        var versionStr = reader.ReadString();
         if (!versionStr.StartsWith("Version")) throw new IOException("Invalid version string.");
         if (!int.TryParse(versionStr.AsSpan(7), out var version)) throw new IOException("Invalid version number.");
         if (!supported_version.Contains(version)) throw new IOException("Unsupported version.");
         
-        var wavelengthName = ReadString(stream);
-        var wavelengthUnit = ReadString(stream);
+        var wavelengthName = reader.ReadString();
+        var wavelengthUnit = reader.ReadString();
         data.WavelengthAxis.Name = wavelengthName;
         data.WavelengthAxis.Unit = wavelengthUnit;
 
-        var wavelengthCount = ReadInt(stream);
-        data.wavelengths = ReadDoubles(stream, wavelengthCount);
+        var wavelengthCount = reader.ReadInt32();
+        data.wavelengths = reader.ReadDoubles(wavelengthCount);
 
-        var timeName = ReadString(stream);
-        var timeUnit = ReadString(stream);
+        var timeName = reader.ReadString();
+        var timeUnit = reader.ReadString();
         data.TimeAxis.Name = timeName;
         data.TimeAxis.Unit = timeUnit;
 
-        var timeCount = ReadInt(stream);
-        data.times = ReadDoubles(stream, timeCount);
+        var timeCount = reader.ReadInt32();
+        data.times = reader.ReadDoubles(timeCount);
 
-        var dataLabel = ReadString(stream);
+        var dataLabel = reader.ReadString();
         if (dataLabel != "DA") throw new IOException("Invalid data label.");
 
-        var padding = ReadInt(stream);
+        var padding = reader.ReadInt32();
         if (padding != 0) throw new IOException("Invalid padding.");
 
-        var wc = ReadInt(stream); // wavelength count
+        var wc = reader.ReadInt32(); // wavelength count
         if (wc != wavelengthCount) throw new IOException("Invalid wavelength count.");
-        var tc = ReadInt(stream); // time count
+        var tc = reader.ReadInt32(); // time count
         if (tc != timeCount) throw new IOException("Invalid time count.");
 
         data.spectra = new double[data.WavelengthCount][];
         for (var i = 0; i < data.WavelengthCount; i++)
-            data.spectra[i] = ReadDoubles(stream, data.TimeCount);
+            data.spectra[i] = reader.ReadDoubles(data.TimeCount);
 
-        data.Metadata = ReadString(stream);
+        data.Metadata = reader.ReadString();
 
         return data;
     } // private static SpectraData ReadFromUfs (Stream)
-
-    private static int ReadInt(Stream stream)
-    {
-        var bytes = new byte[sizeof(int)];
-        stream.Read(bytes, 0, bytes.Length);
-        CorrectEndian(bytes);
-        return BitConverter.ToInt32(bytes, 0);
-    } // private static int ReadInt (Stream)
-
-    private static double ReadDouble(Stream stream)
-    {
-        var bytes = new byte[sizeof(double)];
-        stream.Read(bytes, 0, bytes.Length);
-        CorrectEndian(bytes);
-        return BitConverter.ToDouble(bytes, 0);
-    } // private static double ReadDouble (Stream)
-
-    protected static double[] ReadDoubles(Stream stream, int count)
-    {
-        var values = new double[count];
-        for (var i = 0; i < count; i++)
-            values[i] = ReadDouble(stream);
-        return values;
-    } // protected static double[] ReadDoubles (Stream, int)
-
-    private static string ReadString(Stream stream)
-    {
-        var length = ReadInt(stream);
-        if (length == 0) return string.Empty;
-
-        var bytes = new byte[length];
-        stream.Read(bytes, 0, bytes.Length);
-        return Encoding.UTF8.GetString(bytes);
-    } // private static string ReadString (Stream)
 
     #endregion read
 
@@ -276,67 +243,36 @@ public class SpectraData
     /// <param name="stream">The stream to write the UFS data.</param>
     public void WriteAsUfs(Stream stream)
     {
-        WriteString(stream, GetVersinString());
+        var writer = new UfsWriter(stream);
 
-        WriteAxisInfo(stream, this.WavelengthAxis);
-        WriteAxisData(stream, this.wavelengths);
-        WriteAxisInfo(stream, this.TimeAxis);
-        WriteAxisData(stream, this.times);
+        writer.WriteString(GetVersinString());
 
-        WriteString(stream, GetDataLabel());
-        WriteInt(stream, 0);
-        WriteInt(stream, this.WavelengthCount);
-        WriteInt(stream, this.TimeCount);
+        WriteAxisInfo(writer, this.WavelengthAxis);
+        WriteAxisData(writer, this.wavelengths);
+        WriteAxisInfo(writer, this.TimeAxis);
+        WriteAxisData(writer, this.times);
+
+        writer.WriteString(GetDataLabel());
+        writer.WriteInt32(0);
+        writer.WriteInt32(this.WavelengthCount);
+        writer.WriteInt32(this.TimeCount);
         for (var i = 0; i < this.WavelengthCount; i++)
-            WriteDoubles(stream, this.spectra[i]);
+            writer.WriteDoubles(this.spectra[i]);
 
-        WriteString(stream, this.Metadata);
+        writer.WriteString(this.Metadata);
     } // public void WriteAsUfs (Stream)
 
-    private static void WriteString(Stream stream, string text)
+    private static void WriteAxisInfo(UfsWriter writer, AxisInfo axis)
     {
-        if (string.IsNullOrEmpty(text))
-        {
-            WriteInt(stream, 0);
-            return;
-        }
+        writer.WriteString(axis.Name);
+        writer.WriteString(axis.Unit);
+    } // private static void WriteAxisInfo (UfsWriter, AxisInfo)
 
-        var length = GetBytes(text.Length);
-        var bytes = GetBytes(text);
-
-        stream.Write(length, 0, length.Length);
-        stream.Write(bytes, 0, bytes.Length);
-    } // private static void WriteString (Stream, string)
-
-    private static void WriteInt(Stream stream, int value)
+    private static void WriteAxisData(UfsWriter writer, double[] data)
     {
-        var bytes = GetBytes(value);
-        stream.Write(bytes, 0, bytes.Length);
-    } // private static void WriteInt (Stream, int)
-
-    private static void WriteDouble(Stream stream, double value)
-    {
-        var bytes = GetBytes(value);
-        stream.Write(bytes, 0, bytes.Length);
-    } // private static void WriteDouble (Stream, double)
-
-    private static void WriteDoubles(Stream stream, IEnumerable<double> values)
-    {
-        foreach (var value in values)
-            WriteDouble(stream, value);
-    } // private static void WriteDoubles (Stream, IEnumerable<double>)
-
-    private static void WriteAxisInfo(Stream stream, AxisInfo axis)
-    {
-        WriteString(stream, axis.Name);
-        WriteString(stream, axis.Unit);
-    } // private static void WriteAxisInfo (Stream, AxisInfo)
-
-    private static void WriteAxisData(Stream stream, double[] data)
-    {
-        WriteInt(stream, data.Length);
-        WriteDoubles(stream, data);
-    } // private static void WriteAxisData (Stream, double[])
+        writer.WriteInt32(data.Length);
+        writer.WriteDoubles(data);
+    } // private static void WriteAxisData (UfsWriter, double[])
 
     #region get text
 
@@ -345,37 +281,6 @@ public class SpectraData
     protected virtual string GetDataLabel() => "DA";
 
     #endregion get text
-
-    protected static byte[] CorrectEndian(byte[] bytes)
-    {
-        if (!BitConverter.IsLittleEndian) return bytes;
-        Array.Reverse(bytes);
-        return bytes;
-    } // protected static byte[] CorrectEndian (byte[])
-
-    protected static byte[] GetBytes(int value)
-    {
-        var bytes = BitConverter.GetBytes(value);
-        return CorrectEndian(bytes);
-    } // protected byte[] GetBytes (int)
-
-    protected static byte[] GetBytes(double value)
-    {
-        /*
-         * this implementation returns negative-nan if the value is a nan.
-         * Maybe the most significant bit must be changed
-         * if the SpactraXplorer app does not work well with negative-nan.
-         * i.e., `if (double.IsNaN) bytes[0] ^= 0x80;`
-         */
-        var bytes = BitConverter.GetBytes(value);
-        return CorrectEndian(bytes);
-    } // protected byte[] GetBytes (double
-
-    protected static byte[] GetBytes(string value)
-    {
-        if (string.IsNullOrEmpty(value)) return [];
-        return Encoding.UTF8.GetBytes(value);
-    } // protected byte[] GetBytes (string)
 
     #endregion write
 
