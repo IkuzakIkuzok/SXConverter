@@ -287,7 +287,11 @@ public class SpectraData
 
     private static void WriteString(Stream stream, string text)
     {
-        if (string.IsNullOrEmpty(text)) return;
+        if (string.IsNullOrEmpty(text))
+        {
+            WriteInt(stream, 0);
+            return;
+        }
 
         var length = GetBytes(text.Length);
         var bytes = GetBytes(text);
