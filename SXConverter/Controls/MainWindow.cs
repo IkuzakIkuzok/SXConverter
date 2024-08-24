@@ -19,6 +19,7 @@ internal sealed class MainWindow : Form
     {
         this.Text = "SX Converter";
         this.Size = this.MinimumSize = this.MaximumSize = new(550, 430);
+        this.MaximizeBox = false;
         this.Icon = Properties.Resources.Icon;
 
         #region source
@@ -27,14 +28,14 @@ internal sealed class MainWindow : Form
         {
             Text = "Source",
             Location = new(10, 10),
-            Width = 70,
+            Width = 80,
             Parent = this,
         };
 
         this.tb_source = new()
         {
-            Location = new(80, 10 - 2),
-            Width = 400,
+            Location = new(90, 10 - 2),
+            Width = 390,
             Parent = this,
         };
 
@@ -67,21 +68,21 @@ internal sealed class MainWindow : Form
         {
             Text = "Time (ps)",
             Location = new(30, 100),
-            Width = 100,
+            Width = 110,
             Parent = this,
         };
 
         _ = new Label()
         {
             Text = "From",
-            Location = new(130, 100),
+            Location = new(140, 100),
             Size = new(40, 20),
             Parent = this,
         };
 
         this.nud_timeStart = new()
         {
-            Location = new(170, 100),
+            Location = new(180, 100),
             Size = new(80, 20),
             Enabled = false,
             Minimum = -1_000m,
@@ -93,14 +94,14 @@ internal sealed class MainWindow : Form
         _ = new Label()
         {
             Text = "To",
-            Location = new(260, 100),
-            Size = new Size(20, 20),
+            Location = new(270, 100),
+            Size = new Size(25, 20),
             Parent = this,
         };
 
         this.num_timeEnd = new()
         {
-            Location = new(280, 100),
+            Location = new(295, 100),
             Size = new(80, 20),
             Enabled = false,
             Minimum = -1_000m,
@@ -113,21 +114,21 @@ internal sealed class MainWindow : Form
         {
             Text = "Wavelength (nm)",
             Location = new(30, 140),
-            Width = 100,
+            Width = 110,
             Parent = this,
         };
 
         _ = new Label()
         {
             Text = "From",
-            Location = new(130, 140),
+            Location = new(140, 140),
             Size = new(40, 20),
             Parent = this,
         };
 
         this.nud_wlStart = new()
         {
-            Location = new(170, 140),
+            Location = new(180, 140),
             Size = new(80, 20),
             Enabled = false,
             Minimum = 0m,
@@ -139,14 +140,14 @@ internal sealed class MainWindow : Form
         _ = new Label()
         {
             Text = "To",
-            Location = new(260, 140),
-            Size = new(20, 20),
+            Location = new(270, 140),
+            Size = new(25, 20),
             Parent = this,
         };
 
         this.nud_wlEnd = new()
         {
-            Location = new(280, 140),
+            Location = new(295, 140),
             Size = new(80, 20),
             Enabled = false,
             Minimum = 0m,
@@ -158,7 +159,7 @@ internal sealed class MainWindow : Form
         this.trim = new Button()
         {
             Text = "Trim",
-            Location = new(380, 115),
+            Location = new(395, 115),
             Size = new(70, 30),
             Enabled = false,
             Parent = this,
@@ -169,13 +170,13 @@ internal sealed class MainWindow : Form
         {
             Text = "Metadata",
             Location = new(30, 180),
-            Width = 60,
+            Width = 70,
             Parent = this,
         };
 
         this.tb_metadata = new()
         {
-            Location = new(90, 180),
+            Location = new(100, 180),
             Width = 390,
             Height = 100,
             Multiline = true,
@@ -192,14 +193,14 @@ internal sealed class MainWindow : Form
         {
             Text = "Destination",
             Location = new(10, 320),
-            Width = 70,
+            Width = 80,
             Parent = this,
         };
 
         this.tb_destination = new()
         {
-            Location = new(80, 320 - 2),
-            Width = 400,
+            Location = new(90, 320 - 2),
+            Width = 390,
             Parent = this,
         };
 
