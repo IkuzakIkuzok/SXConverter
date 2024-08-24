@@ -19,6 +19,7 @@ internal sealed class MainWindow : Form
     {
         this.Text = "SX Converter";
         this.Size = this.MinimumSize = this.MaximumSize = new(550, 430);
+        this.Icon = Properties.Resources.Icon;
 
         #region source
 
