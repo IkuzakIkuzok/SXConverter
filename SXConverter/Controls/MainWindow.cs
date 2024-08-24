@@ -12,6 +12,7 @@ internal sealed class MainWindow : Form
     private readonly NumericUpDown nud_timeStart, num_timeEnd, nud_wlStart, nud_wlEnd;
     private readonly Button trim;
     private readonly TextBox tb_metadata;
+    private readonly Button save;
 
     private SpectraData? data;
 
@@ -39,15 +40,17 @@ internal sealed class MainWindow : Form
             Parent = this,
         };
 
-        _ = new BrowseButton<OpenFileDialog>()
+        var srcBrowse = new BrowseButton<OpenFileDialog>()
         {
             Text = "...",
-            Filter = "Comma-separated values|*.csv|Ultrafast Systems Data|*.ufs|All files|*.*",
+            FileName = GetSourceDefaultFileName,
+            Filter = "All supported files|*.csv;*.ufs|Comma-separated values files|*.csv|Ultrafast Systems Data files|*.ufs|All files|*.*",
             Target = this.tb_source,
             Location = new(490, 10 - 2),
             Size = new(30, 25),
             Parent = this
         };
+        srcBrowse.FileSelected += SetDestination;
 
         var load = new Button()
         {
@@ -207,14 +210,16 @@ internal sealed class MainWindow : Form
         _ = new BrowseButton<SaveFileDialog>()
         {
             Text = "...",
+            FileName = GetDestinationDefaultFileName,
             Filter = "Ultrafast Systems Data|*.ufs|Comma-separated values|*.csv|All files|*.*",
+            FilterIndex = GetDestinationDefaultFilterIndex,
             Target = this.tb_destination,
             Location = new(490, 320 - 2),
             Size = new(30, 25),
             Parent = this
         };
 
-        var save = new Button()
+        this.save = new Button()
         {
             Text = "Save",
             Location = new(240, 350),
@@ -222,8 +227,9 @@ internal sealed class MainWindow : Form
             Enabled = false,
             Parent = this,
         };
-        save.Click += SaveData;
-        this.tb_destination.TextChanged += (s, e) => save.Enabled = !string.IsNullOrWhiteSpace(this.tb_destination.Text) && this.data is not null;
+        this.save.Click += SaveData;
+        this.tb_destination.TextChanged += (s, e)
+            => this.save.Enabled = !string.IsNullOrWhiteSpace(this.tb_destination.Text) && this.data is not null;
 
         #endregion destination
     } // ctor ()
@@ -288,6 +294,7 @@ internal sealed class MainWindow : Form
         this.nud_wlStart.Enabled = this.nud_wlEnd.Enabled = true;
         this.trim.Enabled = true;
         this.tb_metadata.Enabled = true;
+        this.save.Enabled = this.tb_destination.TextLength > 0;
     } // private void SetDataInfo ()
 
     private void TrimRange(object? sender, EventArgs e)
@@ -381,4 +388,68 @@ internal sealed class MainWindow : Form
             );
         }
     } // private void SaveData ()
+
+    private string GetSourceDefaultFileName()
+    {
+        var src = this.tb_source.Text;
+        if (string.IsNullOrWhiteSpace(src)) return string.Empty;
+        return Path.GetFileName(src);
+    } // private string GetSourceDefaultFileName ()
+
+    private string GetDestinationDefaultFileName()
+    {
+        var dst = this.tb_destination.Text;
+        if (!string.IsNullOrWhiteSpace(dst)) Path.GetFileName(dst);
+        
+        var src = this.tb_source.Text;
+        if (string.IsNullOrWhiteSpace(src)) return string.Empty;
+        var ext = GetDestinationDefaultFilterIndex() switch
+        {
+            1 => ".ufs",
+            2 => ".csv",
+            _ => string.Empty
+        };
+        return Path.GetFileNameWithoutExtension(src) + ext;
+    } // private string GetDestinationDefaultFileName ()
+
+    private int GetDestinationDefaultFilterIndex()
+    {
+        var dst = this.tb_destination.Text;
+        if (!string.IsNullOrWhiteSpace(dst))
+        {
+            var dstExt = Path.GetExtension(dst).ToUpper();
+            if (dstExt == ".UFS") return 1;
+            if (dstExt == ".CSV") return 2;
+        }
+
+        var src = this.tb_source.Text;
+        if (!string.IsNullOrWhiteSpace(src))
+        {
+            var srcExt = Path.GetExtension(src).ToUpper();
+            if (srcExt == ".UFS") return 2;
+            if (srcExt == ".CSV") return 1;
+        }
+
+        return 1;
+    } // private int GetDestinationDefaultFilterIndex ()
+
+    private void SetDestination(object? sender, EventArgs e)
+    {
+        if (this.tb_destination.TextLength > 0) return;
+
+        var src = this.tb_source.Text;
+        if (string.IsNullOrWhiteSpace(src)) return;
+
+        var folder = Path.GetDirectoryName(src);
+        if (folder is null) return;
+        var filename = Path.GetFileNameWithoutExtension(src);
+        var ext = GetDestinationDefaultFilterIndex() switch
+        {
+            1 => ".ufs",
+            2 => ".csv",
+            _ => string.Empty
+        };
+        var fullpath = Path.Combine(folder, filename + ext);
+        this.tb_destination.Text = fullpath;
+    } // private void SetDestination ()
 } // internal sealed class MainWindow : Form

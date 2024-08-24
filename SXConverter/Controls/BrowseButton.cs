@@ -70,6 +70,18 @@ internal class BrowseButton<T> : Button where T : FileDialog, new()
     /// </summary>
     internal bool ValidateNames { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets the function to get the default file name.
+    /// </summary>
+    internal Func<string>? FileName { get; set; }
+
+    /// <summary>
+    /// Gets or sets the function to get the default filter index.
+    /// </summary>
+    internal Func<int>? FilterIndex { get; set; }
+
+    internal event EventHandler? FileSelected;
+
     override protected void OnClick(EventArgs e)
     {
         base.OnClick(e);
@@ -82,7 +94,9 @@ internal class BrowseButton<T> : Button where T : FileDialog, new()
             CheckPathExists = this.CheckPathExists,
             DefaultExt = this.DefaultExt,
             DereferenceLinks = this.DereferenceLinks,
+            FileName = this.FileName?.Invoke(),
             Filter = this.Filter,
+            FilterIndex = this.FilterIndex?.Invoke() ?? 1,
             ShowHelp = this.ShowHelp,
             SupportMultiDottedExtensions = this.SupportMultiDottedExtensions,
             Title = this.Title,
@@ -91,5 +105,9 @@ internal class BrowseButton<T> : Button where T : FileDialog, new()
         if (dialog.ShowDialog() != DialogResult.OK) return;
 
         this.Target.Text = dialog.FileName;
+        OnFileSelected(EventArgs.Empty);
     } // override protected void OnClick (EventArgs)
+
+    protected virtual void OnFileSelected(EventArgs e)
+        => this.FileSelected?.Invoke(this, e);
 } // internal class BrowseButton<T> : Button where T : FileDialog, new()
