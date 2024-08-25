@@ -39,6 +39,7 @@ internal sealed class MainWindow : Form
             Width = 390,
             Parent = this,
         };
+        this.tb_source.PathChanged += SetDestination;
 
         var srcBrowse = new BrowseButton<OpenFileDialog>()
         {

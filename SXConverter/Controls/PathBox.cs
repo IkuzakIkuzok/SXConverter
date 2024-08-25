@@ -9,6 +9,8 @@ namespace SXConverter.Controls;
 [DesignerCategory("code")]
 internal class PathBox : TextBox
 {
+    internal event EventHandler? PathChanged;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PathBox"/> class.
     /// </summary>
@@ -35,5 +37,9 @@ internal class PathBox : TextBox
         if (e.Data.GetData(DataFormats.FileDrop) is not string[] files) return;
         if (files.Length == 0) return;
         this.Text = files[0];
+        OnPathChanged(EventArgs.Empty);
     } // override protected void OnDragDrop (DragEventArgs)
+
+    protected virtual void OnPathChanged(EventArgs e)
+        => PathChanged?.Invoke(this, e);
 } // internal class PathBox : TextBox
