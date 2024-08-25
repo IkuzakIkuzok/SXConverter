@@ -15,7 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_12906F427933421F8C3CCA8D3E3DF1E5"
+        "MsmKey" = "8:_074008F1AE9B47DB8ABB1A9887602AA5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -80,6 +80,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -113,7 +121,7 @@
         {
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_31D45757D3624C5D88C236467B45C157"
             {
-            "SourcePath" = "8:..\\Icon.ico"
+            "SourcePath" = "8:\\\\data\\kohzuki_kazuki\\Lib\\SurfaceXplorer\\dotnet\\SXConverter\\Icon.ico"
             "TargetName" = "8:Icon.ico"
             "Tag" = "8:"
             "Folder" = "8:_FA5182D660F3439795FB9E939C520ACC"
@@ -319,7 +327,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_A9253A9101854C20822429AE04ADF570"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_32C9DD615E1E441F8B427B8578CE390E"
             {
             "Name" = "8:SXConverter"
             "Arguments" = "8:"
@@ -327,13 +335,13 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_12906F427933421F8C3CCA8D3E3DF1E5"
+            "Target" = "8:_074008F1AE9B47DB8ABB1A9887602AA5"
             "Folder" = "8:_C4AC2F6062F74B819BFC779DD3E75606"
             "WorkingFolder" = "8:_FA5182D660F3439795FB9E939C520ACC"
             "Icon" = "8:_31D45757D3624C5D88C236467B45C157"
             "Feature" = "8:"
             }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_CCC78C387CF149258F225721E8B72F74"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_A8ECCF78F1874350839F683D65C097A6"
             {
             "Name" = "8:SXConverter"
             "Arguments" = "8:"
@@ -341,7 +349,7 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_12906F427933421F8C3CCA8D3E3DF1E5"
+            "Target" = "8:_074008F1AE9B47DB8ABB1A9887602AA5"
             "Folder" = "8:_DBC63A89451E46FAB7FC5E0710E10509"
             "WorkingFolder" = "8:_FA5182D660F3439795FB9E939C520ACC"
             "Icon" = "8:_31D45757D3624C5D88C236467B45C157"
@@ -775,9 +783,9 @@
                 {
                 }
             }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_12906F427933421F8C3CCA8D3E3DF1E5"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_074008F1AE9B47DB8ABB1A9887602AA5"
             {
-            "SourcePath" = "8:..\\SXConverter\\obj\\Release\\net8.0-windows\\apphost.exe"
+            "SourcePath" = "8:\\\\data\\kohzuki_kazuki\\Lib\\SurfaceXplorer\\dotnet\\SXConverter\\SXConverter\\obj\\Release\\net8.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_FA5182D660F3439795FB9E939C520ACC"
@@ -799,7 +807,6 @@
             "OutputGroupCanonicalName" = "8:PublishItems"
             "OutputProjectGuid" = "8:{2F360284-AC74-434E-8112-772537AC075E}"
             "ShowKeyOutput" = "11:TRUE"
-            "PublishProfilePath" = "8:Properties\\PublishProfiles\\FolderProfile.pubxml"
                 "ExcludeFilters"
                 {
                 }
