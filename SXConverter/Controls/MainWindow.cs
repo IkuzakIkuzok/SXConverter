@@ -279,15 +279,15 @@ internal sealed class MainWindow : Form
         var wlMin = (decimal)this.data.WavelengthMin;
         var wlMax = (decimal)this.data.WavelengthMax;
 
-        this.nud_timeStart.Value = tMin;
-        this.num_timeEnd.Value = tMax;
-        this.nud_wlStart.Value = wlMin;
-        this.nud_wlEnd.Value = wlMax;
-
         this.nud_timeStart.Minimum = this.num_timeEnd.Minimum = tMin;
         this.nud_timeStart.Maximum = this.num_timeEnd.Maximum = tMax;
         this.nud_wlStart.Minimum = this.nud_wlEnd.Minimum = wlMin;
         this.nud_wlStart.Maximum = this.nud_wlEnd.Maximum = wlMax;
+
+        this.nud_timeStart.Value = tMin;
+        this.num_timeEnd.Value = tMax;
+        this.nud_wlStart.Value = wlMin;
+        this.nud_wlEnd.Value = wlMax;
 
         this.tb_metadata.Text = this.data.Metadata;
 
