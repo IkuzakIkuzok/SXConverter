@@ -61,7 +61,7 @@ internal sealed class UfsWriter : UfsIOHelper
             return;
         }
 
-        var bytes = BytesConverter.ToBytes(value);
+        var bytes = BytesConverter.ToBytes(value.NormalizeNewLineOutUfs());
         WriteInt32(bytes.Length);
         this._stream.Write(bytes, 0, bytes.Length);
     } // internal void WriteString (string)

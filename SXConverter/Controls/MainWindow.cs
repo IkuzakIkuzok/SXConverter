@@ -289,7 +289,7 @@ internal sealed class MainWindow : Form
         this.nud_wlStart.Minimum = this.nud_wlEnd.Minimum = wlMin;
         this.nud_wlStart.Maximum = this.nud_wlEnd.Maximum = wlMax;
 
-        this.tb_metadata.Text = this.data.Metadata.Replace("\r", Environment.NewLine);
+        this.tb_metadata.Text = this.data.Metadata;
 
         this.nud_timeStart.Enabled = this.num_timeEnd.Enabled = true;
         this.nud_wlStart.Enabled = this.nud_wlEnd.Enabled = true;
@@ -365,7 +365,7 @@ internal sealed class MainWindow : Form
 
         var ext = Path.GetExtension(dst).ToUpper();
 
-        this.data.Metadata = this.tb_metadata.Text.Replace(Environment.NewLine, "\r");
+        this.data.Metadata = this.tb_metadata.Text;
         try
         {
             if (ext == ".UFS")

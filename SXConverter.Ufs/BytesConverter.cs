@@ -1,6 +1,7 @@
 ﻿
 // (c) 2024 Kazuki Kohzuki
 
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace SXConverter.Ufs;
@@ -9,8 +10,31 @@ namespace SXConverter.Ufs;
 /// Converts bytes to various types and vice versa.
 /// The endian is automatically corrected to big-endian.
 /// </summary>
-internal static class BytesConverter
+internal static partial class BytesConverter
 {
+    private static readonly Encoding SystemEncoding;
+
+    [LibraryImport("kernel32.dll")]
+    private static partial int GetACP();
+
+    static BytesConverter()
+    {
+        /*
+         * It seems that the SurfaceXplorer app uses CP932 (Shift_JIS) as long as on my computer,
+         * but it is hard to think that the code page is fixed.
+         * Rather, it is better to assume that the code page is same as the system default encoding.
+         * System.Text.Encoding.Default returns the system default encoding on .NET Framework,
+         * but it always returns Encoding.UTF8 on .NET Core and .NET 5+.
+         * Therefore, we need to use the Windows API to get the system default code page.
+         */
+
+        var provider = CodePagesEncodingProvider.Instance;
+        Encoding.RegisterProvider(provider);
+
+        var codePage = GetACP();
+        SystemEncoding = Encoding.GetEncoding(codePage);
+    } // cctor ()
+
     private static byte[] CorrectEndian(byte[] bytes)
     {
         if (BitConverter.IsLittleEndian)
@@ -40,7 +64,7 @@ internal static class BytesConverter
     /// <param name="bytes">The byte array to convert.</param>
     /// <returns>The string converted from the byte array.</returns>
     internal static string ToString(byte[] bytes)
-        => Encoding.UTF8.GetString(bytes).TrimEnd('\0');
+        => SystemEncoding.GetString(bytes).TrimEnd('\0');
 
     /// <summary>
     /// Converts the specified 32-bit signed integer to a byte array.
@@ -64,5 +88,5 @@ internal static class BytesConverter
     /// <param name="value">The string to convert.</param>
     /// <returns>The byte array converted from the string.</returns>
     internal static byte[] ToBytes(string value)
-        => Encoding.UTF8.GetBytes(value);
-} // internal static class BytesConverter
+        => SystemEncoding.GetBytes(value);
+} // internal static partial class BytesConverter

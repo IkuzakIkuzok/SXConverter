@@ -60,6 +60,6 @@ internal sealed class UfsReader : UfsIOHelper
 
         var bytes = new byte[length];
         this._stream.Read(bytes, 0, bytes.Length);
-        return BytesConverter.ToString(bytes);
+        return BytesConverter.ToString(bytes).NormNewLineInput();
     } // internal string ReadString ()
 } // internal sealed class UfsReader : UfsIOHelper

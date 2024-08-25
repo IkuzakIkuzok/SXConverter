@@ -113,7 +113,7 @@ public class SpectraData
          * Therefore, "file info\r" is inserted at the beginning of the metadata.
          */
         var metadata = reader.ReadToEnd();
-        data.Metadata = "file info\r" + metadata;
+        data.Metadata = ("file info\r" + metadata).NormNewLineInput();
 
         return data;
     } // public static SpectraData ReadFromCsv (Stream)
@@ -224,7 +224,7 @@ public class SpectraData
         writer.Write($"0,{string.Join(',', this.times)}\r");
         for (var i = 0; i < this.WavelengthCount; i++)
             writer.Write($"{this.wavelengths[i]},{string.Join(',', this.spectra[i])}\r");
-        writer.Write(this.Metadata);
+        writer.Write(this.Metadata.NormalizeNewLineOutCsv());
     } // public void WriteAsCsv (Stream)
 
     /// <summary>

@@ -109,5 +109,5 @@ internal class BrowseButton<T> : Button where T : FileDialog, new()
     } // override protected void OnClick (EventArgs)
 
     protected virtual void OnFileSelected(EventArgs e)
-        => this.FileSelected?.Invoke(this, e);
+        => FileSelected?.Invoke(this, e);
 } // internal class BrowseButton<T> : Button where T : FileDialog, new()
