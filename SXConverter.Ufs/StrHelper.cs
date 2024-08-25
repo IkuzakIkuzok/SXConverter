@@ -7,8 +7,8 @@ internal static class StrHelper
 {
     internal static string NormNewLineInput(this string s)
     {
-        if (s.Contains("\r\n")) return s;
-        if (s.Contains('\r')) return s.Replace("\r", "\r\n");
+        s = s.Replace("\r\n", "\n");
+        s = s.Replace("\r", "\n");
         return s.Replace("\n", "\r\n");
     } // internal static string NormNewLineInput (this string)
 
