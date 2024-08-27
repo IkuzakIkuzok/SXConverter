@@ -369,15 +369,31 @@ internal sealed class MainWindow : Form
         try
         {
             if (ext == ".UFS")
+            {
                 this.data.WriteAsUfs(dst);
+                if (Launcher.IsInstalled)
+                {
+                    var dr = MessageBox.Show(
+                        "Data saved successfully. Do you want to open the file with SurfaceXplorer?",
+                        "Confirmation",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question
+                    );
+                    if (dr == DialogResult.Yes)
+                        Launcher.LaunchSX(dst);
+                    return;
+                }
+            }
             else
+            {
                 this.data.WriteAsCsv(dst);
+            }
             MessageBox.Show(
-                "Data saved successfully.",
-                "Success",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
+                    "Data saved successfully.",
+                    "Success",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
         }
         catch (Exception e)
         {
