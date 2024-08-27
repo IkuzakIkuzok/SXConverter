@@ -1,6 +1,7 @@
 ﻿
 // (c) 2024 Kazuki Kohzuki
 
+using SXConverter.Launchers;
 using SXConverter.Ufs;
 
 namespace SXConverter.Controls;
@@ -8,6 +9,9 @@ namespace SXConverter.Controls;
 [DesignerCategory("code")]
 internal sealed class MainWindow : Form
 {
+    private static readonly AppLauncher ufsLauncher = new(".ufs");
+    private static readonly AppLauncher csvLauncher = new(".csv");
+
     private readonly PathBox tb_source, tb_destination;
     private readonly NumericUpDown nud_timeStart, num_timeEnd, nud_wlStart, nud_wlEnd;
     private readonly Button trim;
@@ -371,7 +375,7 @@ internal sealed class MainWindow : Form
             if (ext == ".UFS")
             {
                 this.data.WriteAsUfs(dst);
-                if (Launcher.IsInstalled)
+                if (ufsLauncher.IsRegistered)
                 {
                     var dr = MessageBox.Show(
                         "Data saved successfully. Do you want to open the file with SurfaceXplorer?",
@@ -380,13 +384,25 @@ internal sealed class MainWindow : Form
                         MessageBoxIcon.Question
                     );
                     if (dr == DialogResult.Yes)
-                        Launcher.LaunchSX(dst);
+                        ufsLauncher.OpenFile(dst);
                     return;
                 }
             }
             else
             {
                 this.data.WriteAsCsv(dst);
+                if (csvLauncher.IsRegistered)
+                {
+                    var dr = MessageBox.Show(
+                        "Data saved successfully. Do you want to open the file with the default CSV viewer?",
+                        "Confirmation",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question
+                    );
+                    if (dr == DialogResult.Yes)
+                        csvLauncher.OpenFile(dst);
+                    return;
+                }
             }
             MessageBox.Show(
                     "Data saved successfully.",
