@@ -1,8 +1,6 @@
 ﻿
 // (c) 2024 Kazuki Kohzuki
 
-using System.Text;
-
 namespace SXConverter.Ufs;
 
 /// <summary>
