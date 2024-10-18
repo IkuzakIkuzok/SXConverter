@@ -126,14 +126,38 @@ public class SpectraData
         }
 
         var vals = line.Split(',');
-        if (!vals.All(v => double.TryParse(v, out _)))
+        if (!vals.All(CheckDoubleParsable))
         {
             values = [];
             return 0;
         }
-        values = vals.Select(v => double.Parse(v));
+        values = vals.Select(ParseDouble);
         return vals.Length;
     } // private static IEnumerable<double> ReadValues (StreamReader)
+
+    /// <summary>
+    /// Checks if the string is parsable as a double.
+    /// </summary>
+    /// <param name="s">The string to check.</param>
+    /// <returns><see langword="true"/> if the string is parsable as a double; otherwise, <see langword="false"/>.</returns>
+    private static bool CheckDoubleParsable(string s)
+    {
+        var u = s.ToUpperInvariant();
+        return u == "INF" || u == "-INF" || double.TryParse(s, out _);
+    } // private static bool CheckDoubleParsable (string)
+
+    /// <summary>
+    /// Parses the string as a double.
+    /// </summary>
+    /// <param name="s">The string to parse.</param>
+    /// <returns>The parsed double value.</returns>
+    private static double ParseDouble(string s)
+        => s.ToUpperInvariant() switch
+        {
+            "INF" => double.PositiveInfinity,
+            "-INF" => double.NegativeInfinity,
+            _ => double.Parse(s)
+        };
 
     /// <summary>
     /// Reads a <see cref="SpectraData"/> from an Ultrafast Systems (UFS) file.
